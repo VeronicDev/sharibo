@@ -7,6 +7,7 @@ const path = require("path");
 const {
   generateIdentity,
   computeExternalNullifier,
+  poseidon,
 } = require("../../packages/client/src/identity.ts");
 const { MerkleTree } = require("../../packages/client/src/tree.ts");
 
@@ -27,6 +28,10 @@ async function main() {
   const merkleProof = tree.proof(CLAIMANT_INDEX);
   const externalNullifier = await computeExternalNullifier(CIRCLE_ID, ROUND);
 
+  // Deterministic recipientHash: Poseidon(payout_nullifier, payout_secret)
+  // In production this would be Poseidon hash of the member's payout address.
+  const recipientHash = poseidon(111n, 222n);
+
   const input = {
     identityNullifier: identity.identityNullifier.toString(),
     identitySecret: identity.identitySecret.toString(),
@@ -34,6 +39,7 @@ async function main() {
     pathIndices: merkleProof.pathIndices,
     root: merkleProof.root.toString(),
     externalNullifier: externalNullifier.toString(),
+    recipientHash: recipientHash.toString(),
   };
 
   fs.writeFileSync(

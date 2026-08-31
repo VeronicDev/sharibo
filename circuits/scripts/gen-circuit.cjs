@@ -18,7 +18,7 @@ function generate() {
 
   const output =
     template.trimEnd() +
-    `\n\ncomponent main { public [root, externalNullifier] } = Sharibo(${config.levels});\n`;
+    `\n\ncomponent main { public [root, externalNullifier, recipientHash] } = Sharibo(${config.levels});\n`;
 
   const outPath = path.join(ROOT, "membership.circom");
   fs.writeFileSync(outPath, output);
